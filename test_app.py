@@ -63,6 +63,37 @@ class UssdAppTests(unittest.TestCase):
             connection.close()
         self.assertEqual(session_id, "gateway-session")
 
+    def test_repeated_seed_order_session_is_idempotent(self):
+        first = handle_ussd_request("2*1*2*1", "0772000000", self.database.name, "retry-session")
+        second = handle_ussd_request("2*1*2*1", "0772000000", self.database.name, "retry-session")
+        self.assertEqual(first, second)
+
+        connection = sqlite3.connect(self.database.name)
+        try:
+            count = connection.execute("SELECT COUNT(*) FROM agriculture_orders").fetchone()[0]
+        finally:
+            connection.close()
+        self.assertEqual(count, 1)
+
+    def test_gateway_rejects_missing_phone_number(self):
+        response = self.client.post(
+            "/ussd",
+            data={"sessionId": "session-1", "text": "1"},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("Invalid session or phone number", response.data.decode())
+
+    def test_gateway_rejects_invalid_phone_number(self):
+        response = self.client.post(
+            "/ussd",
+            data={
+                "sessionId": "session-1",
+                "phoneNumber": "not-a-phone",
+                "text": "1",
+            },
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_invalid_selection_does_not_create_transaction(self):
         response = handle_ussd_request("2*9", "0772000000", self.database.name)
         self.assertEqual(response, "END Invalid selection. Please redial and try again.")

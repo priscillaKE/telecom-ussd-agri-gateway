@@ -67,6 +67,12 @@ python -m unittest -v
 | `phoneNumber` | Farmer phone number stored with completed interactions |
 | `text` | Asterisk-delimited menu path, such as `2*1*2*1` |
 
+`sessionId` and `phoneNumber` are required. Phone numbers may use local
+Ugandan format such as `0772000000` or international format such as
+`+256772000000`. Invalid gateway requests receive HTTP `400` rather than being
+recorded with a placeholder number. Repeated seed-order requests with the same
+session ID return the original order instead of creating a duplicate.
+
 Responses begin with `CON` while the session continues and `END` when it completes. Set `USSD_DB_NAME` to point the service at a different SQLite database.
 
 ## Project Structure

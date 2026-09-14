@@ -45,6 +45,14 @@ def log_transaction(
     """Insert a completed price check or pending seed order."""
     conn = sqlite3.connect(db_name or DB_NAME)
     cursor = conn.cursor()
+    if service_type == "Seed Order" and session_id:
+        existing = cursor.execute(
+            "SELECT id FROM agriculture_orders WHERE service_type = ? AND session_id = ?",
+            (service_type, session_id),
+        ).fetchone()
+        if existing:
+            conn.close()
+            return existing[0]
     cursor.execute("""
         INSERT INTO agriculture_orders
         (phone_number, service_type, selection_details, timestamp, session_id, status, quantity, location)
