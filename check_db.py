@@ -5,11 +5,11 @@ database_name = os.environ.get("USSD_DB_NAME", "ussd_transactions.db")
 conn = sqlite3.connect(database_name)
 cursor = conn.cursor()
 
-# Pull all logged seed orders from your warehouse table
+# Pull all recorded transactions.
 cursor.execute("SELECT * FROM agriculture_orders")
 records = cursor.fetchall()
 
-print("\n--- KILIMOMOMO DATABASE AUDIT TRAILS ---")
+print("\n--- KILIMOMOMO TRANSACTION REPORT ---")
 print(f"Database: {database_name}")
 print(f"Total Transactions Logged: {len(records)}")
 for row in records:

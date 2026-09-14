@@ -2,7 +2,7 @@
 
 KilimoMoMo is a Flask-based USSD service for farmers who need crop prices and seed delivery without a smartphone or mobile data. It accepts the form payload used by common telecom USSD gateways, returns `CON`/`END` responses, and records completed interactions in SQLite.
 
-## What This Demonstrates
+## Service Capabilities
 
 - Designing a multi-step USSD menu with predictable session input handling
 - Building a Flask integration endpoint for telecom gateway requests
@@ -33,10 +33,10 @@ curl.exe http://127.0.0.1:5000/health
 Start the seed-order flow:
 
 ```powershell
-curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2"
-curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2*1"
-curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2*1*2"
-curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2*1*2*1"
+curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=session-1" -d "phoneNumber=0772000000" -d "text=2"
+curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=session-1" -d "phoneNumber=0772000000" -d "text=2*1"
+curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=session-1" -d "phoneNumber=0772000000" -d "text=2*1*2"
+curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=session-1" -d "phoneNumber=0772000000" -d "text=2*1*2*1"
 ```
 
 The final request records two 5KG bags for pickup in Nakasongola and returns an

@@ -66,7 +66,7 @@ def log_transaction(
 
 def handle_ussd_request(text_input, phone_number="0770000000", db_name=None, session_id=""):
     """
-    Simulates a telecom core network GSM session handler.
+    Handle a telecom gateway session.
     CON = Continue session | END = End session
     """
     inputs = text_input.strip().split("*") if text_input and text_input.strip() else []
