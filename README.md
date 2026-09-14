@@ -35,7 +35,13 @@ Start the seed-order flow:
 ```powershell
 curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2"
 curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2*1"
+curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2*1*2"
+curl.exe -X POST http://127.0.0.1:5000/ussd -d "sessionId=demo-1" -d "phoneNumber=0772000000" -d "text=2*1*2*1"
 ```
+
+The final request records two 5KG bags for pickup in Nakasongola and returns an
+order number such as `KM-000001`. Seed orders are stored with `pending` status,
+quantity, pickup location, and the gateway session ID.
 
 Inspect recorded interactions:
 
@@ -59,7 +65,7 @@ python -m unittest -v
 | --- | --- |
 | `sessionId` | Gateway session identifier used for request tracing |
 | `phoneNumber` | Farmer phone number stored with completed interactions |
-| `text` | Asterisk-delimited menu path, such as `2*1` |
+| `text` | Asterisk-delimited menu path, such as `2*1*2*1` |
 
 Responses begin with `CON` while the session continues and `END` when it completes. Set `USSD_DB_NAME` to point the service at a different SQLite database.
 

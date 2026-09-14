@@ -19,8 +19,12 @@ def ussd_gateway():
 
     app.logger.info("USSD request session=%s phone=%s input=%s", session_id, phone_number, text_input)
 
-    # Pass text AND phone number to track orders uniquely
-    response_menu = handle_ussd_request(text_input, phone_number, app.config["DB_NAME"])
+    response_menu = handle_ussd_request(
+        text_input,
+        phone_number,
+        app.config["DB_NAME"],
+        session_id,
+    )
     return response_menu, 200, {"Content-Type": "text/plain; charset=utf-8"}
 
 if __name__ == "__main__":

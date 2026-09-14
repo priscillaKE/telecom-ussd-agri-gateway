@@ -24,18 +24,44 @@ class UssdAppTests(unittest.TestCase):
         self.assertIn("1. Check Crop Market Prices", response)
 
     def test_seed_order_is_logged(self):
-        response = handle_ussd_request("2*1", "0772000000", self.database.name)
-        self.assertTrue(response.startswith("END Request Logged!"))
+        response = handle_ussd_request("2*1*2*1", "0772000000", self.database.name, "session-1")
+        self.assertTrue(response.startswith("END Order KM-000001 received."))
 
         connection = sqlite3.connect(self.database.name)
         try:
             row = connection.execute(
-                "SELECT phone_number, service_type, selection_details "
+                "SELECT phone_number, service_type, selection_details, session_id, status, quantity, location "
                 "FROM agriculture_orders"
             ).fetchone()
         finally:
             connection.close()
-        self.assertEqual(row, ("0772000000", "Seed Order", "Longe 5 Maize (5KG)"))
+        self.assertEqual(row, (
+            "0772000000", "Seed Order", "Longe 5 Maize (5KG)",
+            "session-1", "pending", 2, "Nakasongola town",
+        ))
+
+    def test_seed_order_collects_quantity_before_completion(self):
+        response = handle_ussd_request("2*1", "0772000000", self.database.name)
+        self.assertTrue(response.startswith("CON Select quantity"))
+
+    def test_gateway_passes_session_id_to_completed_order(self):
+        response = self.client.post(
+            "/ussd",
+            data={
+                "sessionId": "gateway-session",
+                "phoneNumber": "0772000000",
+                "text": "2*2*1*2",
+            },
+        )
+        self.assertIn("Order KM-000001", response.data.decode())
+        connection = sqlite3.connect(self.database.name)
+        try:
+            session_id = connection.execute(
+                "SELECT session_id FROM agriculture_orders"
+            ).fetchone()[0]
+        finally:
+            connection.close()
+        self.assertEqual(session_id, "gateway-session")
 
     def test_invalid_selection_does_not_create_transaction(self):
         response = handle_ussd_request("2*9", "0772000000", self.database.name)
