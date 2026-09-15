@@ -43,6 +43,13 @@ The final request records two 5KG bags for pickup in Nakasongola and returns an
 order number such as `KM-000001`. Seed orders are stored with `pending` status,
 quantity, pickup location, and the gateway session ID.
 
+## Demo
+
+The VS Code workspace below shows the text-menu execution alongside the SQLite
+transaction database:
+
+![KilimoMoMo USSD menu execution](ussd_workspace_screenshot.png)
+
 Inspect recorded interactions:
 
 ```powershell
